@@ -19,9 +19,13 @@ np.savetxt("linear.csv", np.vstack((x, y, yerr)).T, delimiter=",",
 
 
 # Generate Poisson dataset.
-m, b = -2.0, 8.0
-norm = np.exp(b) * (np.exp(m * mx) - np.exp(m * mn)) / m
-x = np.sort(np.random.uniform(mn, mx, np.random.poisson(norm)))
-p = np.exp(m * x + b) / norm
-x = x[np.random.rand(len(p)) < p]
+alpha, beta = 500.0, -2.0
+mn, mx = 1., 5.
+bins = np.linspace(mn, mx, 20)
+samps = []
+for i in range(len(bins) - 1):
+    k = alpha * (0.5*(bins[i+1] + bins[i])) ** beta * (bins[i+1] - bins[i])
+    samps.append(np.random.uniform(bins[i], bins[i+1], np.random.poisson(k)))
+x = np.sort(np.concatenate(samps))
+print(len(x))
 np.savetxt("poisson.csv", x)
